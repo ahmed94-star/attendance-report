@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Attendance Report Generator</h1>
+
+        <!-- Input for file upload -->
+        <input type="file" id="file-input" />
+        <button onclick="processFile()">Upload File</button>
+
+        <!-- Data preview section -->
+        <h2>Data Preview</h2>
+        <pre id="output"></pre>
+
+        <!-- Button to download the PDF report -->
+        <div id="pdf-button-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
