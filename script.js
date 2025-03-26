@@ -1,41 +1,44 @@
 
 function processFile() {
     const fileInput = document.getElementById('file-input');
-    const file = fileInput.files[0];
+    const files = fileInput.files;
 
-    if (!file) {
-        alert("Please select a file first.");
+    if (files.length === 0) {
+        alert("Please select files first.");
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const data = e.target.result;
-        const workbook = XLSX.read(data, { type: 'binary' });
+    // قراءة كل ملف تم رفعه
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = e.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
 
-        // قراءة البيانات من الورقة الأولى
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
+            // قراءة البيانات من الورقة الأولى
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
 
-        // تحويل البيانات إلى JSON
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
+            // تحويل البيانات إلى JSON
+            const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-        // عرض البيانات في صفحة HTML
-        document.getElementById('output').textContent = JSON.stringify(jsonData, null, 2);
+            // عرض البيانات في صفحة HTML
+            document.getElementById('output').textContent += JSON.stringify(jsonData, null, 2) + "\n\n";
 
-        // إضافة زر لتحميل تقرير PDF
-        const downloadButton = document.createElement('button');
-        downloadButton.textContent = "Download PDF Report";
-        downloadButton.onclick = () => generatePDF(jsonData);
-        document.getElementById('pdf-button-container').appendChild(downloadButton);
-    };
+            // إضافة زر لتحميل تقرير PDF لكل ملف
+            const downloadButton = document.createElement('button');
+            downloadButton.textContent = `Download PDF Report for ${file.name}`;
+            downloadButton.onclick = () => generatePDF(jsonData, file.name);
+            document.getElementById('pdf-button-container').appendChild(downloadButton);
+        };
 
-    // قراءة الملف كـ binary string
-    reader.readAsBinaryString(file);
+        // قراءة الملف كـ binary string
+        reader.readAsBinaryString(file);
+    });
 }
 
 // دالة لتوليد تقرير PDF
-function generatePDF(data) {
+function generatePDF(data, fileName) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
@@ -63,5 +66,5 @@ function generatePDF(data) {
     });
     
     // تحميل التقرير كملف PDF
-    doc.save('attendance_report.pdf');
+    doc.save(`${fileName}_attendance_report.pdf`);
 }
